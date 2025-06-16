@@ -2,9 +2,9 @@ import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 
 // Bestimme den base-Pfad basierend auf der Umgebung
-const base = process.env.NODE_ENV === "production" && process.env.GITHUB_PAGES 
-  ? "/okr-vizz/"  // Nur für GitHub Pages
-  : "/";          // Für lokale Entwicklung und Preview
+const base = process.env.NODE_ENV === "production" 
+  ? "/okr-vizz/"  // Für Produktion (inkl. GitHub Pages)
+  : "/";          // Für lokale Entwicklung
 
 export default defineConfig({
   plugins: [solid()],
