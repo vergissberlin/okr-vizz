@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "preview": "serve dist"
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
@@ -21,6 +22,7 @@
     "postcss": "^8.4.24",
     "puppeteer": "^24.10.1",
     "puppeteer-core": "^24.10.1",
+    "serve": "^14.2.4",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.0.2",
     "vite": "^4.4.5",
