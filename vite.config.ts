@@ -9,6 +9,7 @@ const base = process.env.NODE_ENV === "production"
 export default defineConfig({
   plugins: [solid()],
   base,
+  publicDir: "public",
   server: {
     port: 3000,
     host: true,
@@ -16,5 +17,13 @@ export default defineConfig({
   },
   build: {
     target: "esnext",
+    assetsDir: "assets",
+    rollupOptions: {
+      output: {
+        assetFileNames: "assets/[name]-[hash][extname]",
+        chunkFileNames: "assets/[name]-[hash].js",
+        entryFileNames: "assets/[name]-[hash].js",
+      },
+    },
   },
 });
