@@ -49,8 +49,26 @@ const OKRTree: Component = () => {
     }
   };
 
-  const renderKeyResult = (kr: KeyResult) => (
-    <div class="ml-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow mb-2 transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer"
+  const getLevelColor = (level: string) => {
+    switch (level) {
+      case "company": return "bg-blue-100 dark:bg-blue-900";
+      case "division": return "bg-green-100 dark:bg-green-900";
+      case "team": return "bg-purple-100 dark:bg-purple-900";
+      default: return "bg-gray-100 dark:bg-gray-700";
+    }
+  };
+
+  const getLevelBorder = (level: string) => {
+    switch (level) {
+      case "company": return "border-blue-500";
+      case "division": return "border-green-500";
+      case "team": return "border-purple-500";
+      default: return "border-gray-500";
+    }
+  };
+
+  const renderKeyResult = (kr: KeyResult, level: number) => (
+    <div class={`ml-${level * 12} p-4 bg-white dark:bg-gray-800 rounded-lg shadow mb-2 transition-all duration-300 ease-in-out hover:shadow-lg cursor-pointer border-l-4 border-gray-300`}
          onClick={() => setSelectedKeyResult(kr)}>
       <div class="flex items-center justify-between">
         <h4 class="text-lg font-semibold text-gray-900 dark:text-white">{kr.title}</h4>
@@ -97,9 +115,9 @@ const OKRTree: Component = () => {
     </div>
   );
 
-  const renderObjective = (objective: Objective) => (
+  const renderObjective = (objective: Objective, level: number = 0) => (
     <div class="mb-4">
-      <div class="flex items-center space-x-4 p-4 bg-gray-100 dark:bg-gray-700 rounded-lg transition-all duration-300 ease-in-out">
+      <div class={`flex items-center space-x-4 p-4 ${getLevelColor(objective.level)} rounded-lg transition-all duration-300 ease-in-out border-l-4 ${getLevelBorder(objective.level)} ml-${level * 12}`}>
         <button
           onClick={() => toggleNode(objective.id)}
           class="text-gray-600 dark:text-gray-300 transition-transform duration-300"
@@ -110,7 +128,12 @@ const OKRTree: Component = () => {
           ▶
         </button>
         <div class="flex-1">
-          <h3 class="text-xl font-bold text-gray-900 dark:text-white">{objective.title}</h3>
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-semibold px-2 py-1 rounded bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+              {objective.level.toUpperCase()}
+            </span>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white">{objective.title}</h3>
+          </div>
           <div class="mt-2">
             <div class="flex justify-between text-sm text-gray-600 dark:text-gray-300">
               <span>Progress</span>
@@ -127,8 +150,8 @@ const OKRTree: Component = () => {
       </div>
       <Show when={expandedNodes().has(objective.id)}>
         <div class="mt-2 transition-all duration-300 ease-in-out">
-          {objective.keyResults.map(renderKeyResult)}
-          {objective.children?.map(renderObjective)}
+          {objective.keyResults?.map(kr => renderKeyResult(kr, level + 1))}
+          {objective.children?.map(child => renderObjective(child, level + 1))}
         </div>
       </Show>
     </div>
@@ -139,11 +162,11 @@ const OKRTree: Component = () => {
     const convertToTypedObjective = (obj: any): Objective => ({
       ...obj,
       level: obj.level as "company" | "division" | "team",
-      keyResults: obj.keyResults.map((kr: any) => ({
+      keyResults: obj.keyResults?.map((kr: any) => ({
         ...kr,
         status: kr.status as OKRStatus
-      })),
-      children: obj.children?.map(convertToTypedObjective)
+      })) || [],
+      children: obj.children?.map(convertToTypedObjective) || []
     });
 
     const typedData: Objective[] = okrData.objectives.map(convertToTypedObjective);
@@ -152,7 +175,7 @@ const OKRTree: Component = () => {
 
   return (
     <div class="space-y-4">
-      {data().map(renderObjective)}
+      {data().map(obj => renderObjective(obj))}
       <Show when={selectedKeyResult()}>
         <KeyResultDetail
           keyResult={selectedKeyResult()!}
