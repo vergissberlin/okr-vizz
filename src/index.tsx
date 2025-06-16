@@ -14,7 +14,7 @@ if (!root) {
 render(
   () => (
     <MetaProvider>
-      <Router>
+      <Router base={import.meta.env.BASE_URL}>
         <Route path="/" component={App} />
       </Router>
     </MetaProvider>
